@@ -646,3 +646,60 @@ FROM (
 ) t
 WHERE rank_in_cap <= 3
 ORDER BY cap_label, uses_history, rank_in_cap;
+
+-- ====================================================================
+-- Part 2: Score the frozen rules on the test period
+-- ====================================================================
+-- This part was run once, after the three rules in gold.rule_flags were
+-- frozen and committed. Nothing above this line reads test-period rows, and no
+-- rule was changed after this part was run.
+-- The existing flag and the three frozen rules, build and test side by side.
+-- TRANSFER and CASH_OUT only. Day 31 is excluded.
+SELECT
+    rule_name,
+    rule_period,
+    fraud_rate_pct,
+    flagged_transactions,
+    true_positives  AS fraud_caught,
+    false_positives AS honest_flagged,
+    precision_pct,
+    recall_pct,
+    false_positive_rate_pct,
+    CASE
+        WHEN false_positive_rate_pct <= 0.5 THEN 'within 0.5% cap'
+        ELSE 'over 0.5% cap'
+    END AS cap_check
+FROM gold.report_rule_performance
+ORDER BY rule_name, rule_period;
+
+-- Did the destination history behave differently in the two periods?
+-- The history starts at step 1, so every account looks new at the start of the
+-- month and fewer do later on. This shows, for each period, how many honest
+-- and fraud transfers went to a new destination.
+SELECT
+    dt.rule_period,
+    CASE
+        WHEN h.destination_prior_transactions = 0 THEN 'new destination'
+        ELSE 'received before'
+    END                                                        AS destination_history,
+    COUNT(*)                                                   AS transfers,
+    SUM(f.is_fraud)                                            AS fraud_transfers,
+    COUNT(*) - SUM(f.is_fraud)                                 AS honest_transfers,
+    CAST((COUNT(*) - SUM(f.is_fraud)) * 100.0
+         / SUM(COUNT(*) - SUM(f.is_fraud)) OVER (PARTITION BY dt.rule_period) AS DECIMAL(7,4)) AS share_of_honest_transfers_pct
+FROM gold.fact_transactions f
+LEFT JOIN gold.fact_destination_history h
+    ON f.transaction_id = h.transaction_id
+LEFT JOIN gold.dim_time dt
+    ON f.time_key = dt.time_key
+LEFT JOIN gold.dim_transaction_type ty
+    ON f.transaction_type_key = ty.transaction_type_key
+WHERE ty.transaction_type = 'TRANSFER'
+  AND dt.rule_period != 'excluded'
+GROUP BY
+    dt.rule_period,
+    CASE
+        WHEN h.destination_prior_transactions = 0 THEN 'new destination'
+        ELSE 'received before'
+    END
+ORDER BY dt.rule_period, destination_history;

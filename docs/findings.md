@@ -286,9 +286,13 @@ The amount works very differently for the two types.
 Script: `10_better_rule.sql`. Rule definitions: the view `gold.rule_flags`. Scores: the view
 `gold.report_rule_performance`.
 
-**Status: the rules below are frozen. They were designed on the build period (days 1 to 15)
-only. The test period (days 16 to 30) has not been looked at yet, so this section holds
-build-period scores only. The test result will be added below without changing any rule.**
+**Short answer: yes, within limits. On test days it had never seen, the chosen rule caught
+47.7% of fraud while flagging 0.45% of honest transfers and cash-outs. The existing flag
+caught 0.25%. More than half of the fraud is still missed at that level of false alarms.**
+
+The rules below were designed on the build period (days 1 to 15) only, then frozen and
+committed. They were scored once on the test period (days 16 to 30) after that, and no rule
+was changed afterwards. Build-period scores come first, and the test result is at the end.
 
 ### How the rule was chosen
 
@@ -395,4 +399,76 @@ Reading these:
 
 ### Test-period result
 
-Not yet run. The frozen rules will be scored once on days 16 to 30 and the result added here.
+Script: `10_better_rule.sql`, Part 2.
+
+The frozen rules were scored once on days 16 to 30, TRANSFER and CASH_OUT only. No rule was
+changed after this was run. The test period has 3,924 fraud and 501,315 honest transactions.
+
+| Rule | Period | Fraud rate | Flagged | Fraud caught | Honest flagged | Precision | Recall | False positive rate |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| Existing flag | Build | 0.1774% | 3 | 3 | 0 | 100.0000% | 0.0747% | 0.0000% |
+| Existing flag | Test | 0.7767% | 10 | 10 | 0 | 100.0000% | 0.2548% | 0.0000% |
+| Chosen rule | Build | 0.1774% | 10,758 | 1,748 | 9,010 | 16.2484% | 43.5151% | 0.3985% |
+| Chosen rule | Test | 0.7767% | 4,148 | 1,872 | 2,276 | 45.1302% | 47.7064% | 0.4540% |
+| No-hour rule | Build | 0.1774% | 10,377 | 1,235 | 9,142 | 11.9013% | 30.7443% | 0.4044% |
+| No-hour rule | Test | 0.7767% | 3,151 | 1,279 | 1,872 | 40.5903% | 32.5943% | 0.3734% |
+| Wider rule (outside the cap) | Build | 0.1774% | 70,462 | 3,130 | 67,332 | 4.4421% | 77.9188% | 2.9781% |
+| Wider rule (outside the cap) | Test | 0.7767% | 18,109 | 3,143 | 14,966 | 17.3560% | 80.0968% | 2.9853% |
+
+Did each rule stay within the 0.5% cap on the test period?
+
+| Rule | Test false positive rate | Within the 0.5% cap? |
+|---|---:|---|
+| Chosen rule | 0.4540% | Yes |
+| No-hour rule | 0.3734% | Yes |
+| Wider rule | 2.9853% | No, by design. It was never meant to be. |
+
+What the test shows:
+
+- **The rules held up.** Recall and false positive rate are the fair comparison between the
+  periods, and both stayed close to their build-period values. The chosen rule's recall went
+  from 43.5151% to 47.7064% and its false positive rate from 0.3985% to 0.4540%. A rule
+  fitted to noise would have dropped on unseen days. None of the three did.
+- **The chosen rule's margin under the cap got thinner.** It stayed within 0.5%, but moved
+  from 0.3985% to 0.4540%.
+- **Precision rose sharply, and that is not an improvement.** The chosen rule's precision
+  went from 16.2484% to 45.1302% because fraud is more than four times as common in the test
+  period (0.7767% against 0.1774%), which follows from the collapse in normal volume after
+  day 17. The rule did not become more accurate.
+- **Against the existing flag:** on the test period the chosen rule caught 1,872 of 3,924
+  fraud transactions and the existing flag caught 10.
+- **Without the hour:** the no-hour rule caught 32.5943% of test-period fraud. That is the
+  figure to keep in mind for real data, since the hour signal is probably an artifact of the
+  simulation.
+- **The wider rule** caught 80.0968% of test-period fraud, by flagging 2.9853% of honest
+  customers.
+
+Did the shorter history early in the month affect the result?
+
+The destination history starts at step 1, so more accounts look new early in the month. If
+that mattered much, honest transfers to a "new" destination would be a clearly smaller share
+in the test period, which would make the test easier than the build.
+
+| Period | Honest transfers | To a new destination | Share |
+|---|---:|---:|---:|
+| Build | 428,357 | 54,713 | 12.7728% |
+| Test | 100,455 | 11,633 | 11.5803% |
+
+The share is a little lower in the test period, as expected, but only by about one point. It
+does not seem to have flattered the result: the chosen rule's false positive rate went up on
+the test period, not down, and the wider rule, which flags every transfer to a new
+destination, had almost the same false positive rate in both periods (2.9781% and 2.9853%).
+
+The signal itself held completely. All 1,962 fraud transfers in the test period went to a new
+destination, against 1,995 of 1,999 in the build period.
+
+### Limits of this result
+
+- This is synthetic data. The rules describe how PaySim generates fraud, and real fraud will
+  differ.
+- The hour signal is probably an artifact of the simulation. The no-hour rule is the more
+  realistic guide.
+- "New destination" is measured inside one month of data. With a longer history, fewer honest
+  destinations would look new, which would probably help, but this data cannot show it.
+- Build and test come from the same simulated month. The test shows the rules were not fitted
+  to noise. It does not show they would survive a change in how fraud behaves.
