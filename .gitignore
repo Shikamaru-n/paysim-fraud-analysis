@@ -21,9 +21,11 @@ Thumbs.db
 .vs/
 
 # Ignore the raw dataset. The PaySim CSV is about 470 MB and is downloaded
-# from Kaggle, so it is never committed. See the README for the download link.
+# from Kaggle, so it is never committed. See datasets/README.md for the
+# download link. Everything in the datasets folder is ignored except that README.
 *.csv
-datasets/
+datasets/*
+!datasets/README.md
 
 # Ignore exported data or diagrams
 *.png

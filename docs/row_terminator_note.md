@@ -80,8 +80,8 @@ under a user profile.
 
 That evidence was not relevant. `xp_fileexist` runs as the service account. `BULK INSERT` over
 a Windows Authentication connection does not: it impersonates the Windows login that is
-calling it. Confirming the login inside the failing session showed `MUGIWARA-SHIKAM\malac`,
-which has full access to the folder. The file was being read the whole time.
+calling it. Confirming the login inside the failing session showed the Windows login running
+sqlcmd, which has full access to the folder. The file was being read the whole time.
 
 So no permission changes were made, and none are needed. If `BULK INSERT` is ever switched to
 a SQL Server login rather than Windows Authentication, that changes: the service account would

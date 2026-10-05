@@ -25,8 +25,9 @@ Usage Notes:
         sqlcmd -S localhost\SQLEXPRESS -E -C -d master -i scripts\run_all.sql
     - Before running, set the CSV path in scripts\bronze\proc_load_bronze.sql
       and tests\reconciliation_checks.sql to where the file is on your machine.
-    - It takes roughly 20 minutes on an 8 GB laptop. Close other applications
-      first: the silver load needs free memory for a large sort.
+    - It takes roughly 10 to 20 minutes on an 8 GB laptop, depending on how
+      much memory is free. Close other applications first: the silver load
+      needs free memory for a large sort.
     - The load procedures catch their own errors and print them. So after each
       load this script checks the table is not empty, and stops if it is.
 ===============================================================================
