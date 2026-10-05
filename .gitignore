@@ -1,0 +1,30 @@
+# Ignore system-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore local configuration files
+*.env
+
+# Ignore SQL Server-related files
+*.mdf
+*.ldf
+*.ndf
+
+# Ignore temporary or backup files
+*.log
+*.bak
+*.tmp
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+.vs/
+
+# Ignore the raw dataset. The PaySim CSV is about 470 MB and is downloaded
+# from Kaggle, so it is never committed. See the README for the download link.
+*.csv
+datasets/
+
+# Ignore exported data or diagrams
+*.png
+*.pdf
