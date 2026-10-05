@@ -1,0 +1,31 @@
+object_name total_rows
+----------- ----------
+bronze.paysim_transactions 6362620
+silver.paysim_transactions 6362620
+gold.dim_time 743
+gold.dim_transaction_type 5
+gold.fact_destination_history 6362620
+gold.fact_transactions 6362620
+gold.rule_flags 2770409
+total_amount total_origin_old_balance total_origin_new_balance total_destination_old_balance total_destination_new_balance fraud_rows flagged_rows merchant_destination_rows zero_amount_rows origin_mismatch_rows destination_mismatch_rows
+------------ ------------------------ ------------------------ ----------------------------- ----------------------------- ---------- ------------ ------------------------- ---------------- -------------------- -------------------------
+1144392944759.77 5305681315646.41 5440763329971.50 7003346437431.25 7794186583127.56 8213 16 2151495 16 3601595 2791908
+min_id max_id sum_of_id_times_step id_fingerprint
+------ ------ -------------------- --------------
+1 6362620 6531961385253354 250801431
+sum_of_prior_transactions highest_prior_transactions history_fingerprint
+------------------------- -------------------------- -------------------
+31985659 112 101801971
+chosen_rule_flagged no_hour_rule_flagged wider_rule_flagged rule_flag_fingerprint
+------------------- -------------------- ------------------ ---------------------
+15041 13615 88789 836514070
+rule_name rule_period total_transactions fraud_transactions fraud_rate_pct flagged_transactions true_positives false_positives false_negatives precision_pct recall_pct false_positive_rate_pct
+--------- ----------- ------------------ ------------------ -------------- -------------------- -------------- --------------- --------------- ------------- ---------- -----------------------
+1: existing flag build 2264898 4017 .1774 3 3 0 4014 100.0000 .0747 .0000
+1: existing flag test 505239 3924 .7767 10 10 0 3914 100.0000 .2548 .0000
+2: chosen rule build 2264898 4017 .1774 10758 1748 9010 2269 16.2484 43.5151 .3985
+2: chosen rule test 505239 3924 .7767 4148 1872 2276 2052 45.1302 47.7064 .4540
+3: no-hour rule build 2264898 4017 .1774 10377 1235 9142 2782 11.9013 30.7443 .4044
+3: no-hour rule test 505239 3924 .7767 3151 1279 1872 2645 40.5903 32.5943 .3734
+4: wider rule (outside the 0.5% cap) build 2264898 4017 .1774 70462 3130 67332 887 4.4421 77.9188 2.9781
+4: wider rule (outside the 0.5% cap) test 505239 3924 .7767 18109 3143 14966 781 17.3560 80.0968 2.9853
