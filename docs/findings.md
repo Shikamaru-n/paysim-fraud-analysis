@@ -12,7 +12,6 @@ Things to know before reading:
 - Every number was produced by the script named under its heading, in `scripts/analysis/`.
 - Questions 1 to 8 are descriptive and cover the whole month (6,362,620 transactions).
 - Question 9 uses the build period only (days 1 to 15), because it feeds the rule design.
-- Question 10 is answered in Phase 8.
 - No finding uses the balance columns.
 - The hour of the day is a strong signal in this data, but probably an artifact of the
   simulation. Fraud is spread evenly across the day while normal activity follows a daily
@@ -209,7 +208,7 @@ It looks like all of the fraud. The rule misses 8,197 of the 8,213 fraud transac
 Script: `09_fraud_signals_build_period.sql`
 
 Build period only (days 1 to 15), TRANSFER and CASH_OUT only. These are the numbers the
-Phase 8 rule is designed from. The test period was not looked at for this question.
+detection rule was designed from. The test period was not looked at for this question.
 
 Starting point in the build period:
 
@@ -278,8 +277,8 @@ The amount works very differently for the two types.
   say which clock hour slot 0 is.
 - Neither signal alone reaches most of the fraud. 1,383 of the 2,018 fraud cash-outs are
   under 1,000,000, and about two thirds of the fraud in each type falls outside slots 0 to 7.
-  How much of that a rule can reach without flagging many honest customers is the question
-  for Phase 8. These two signals have not yet been looked at in combination.
+  How much of that a rule can reach without flagging many honest customers is taken up under
+  question 10, where the two signals are combined.
 
 ## 10. Can a better SQL rule catch more fraud without flagging too many honest customers?
 

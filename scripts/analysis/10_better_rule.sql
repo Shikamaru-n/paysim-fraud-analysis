@@ -7,8 +7,11 @@ Business Question:
     customers?
 
 Script Purpose:
-    Part 1 (this part) scores candidate rules on the BUILD PERIOD ONLY
-    (days 1 to 15), to choose a rule.
+    Part 1 scores candidate rules on the BUILD PERIOD ONLY (days 1 to 15), to
+    choose a rule.
+
+    Part 2, at the end of the script, scores the three frozen rules once on
+    the test period (days 16 to 30).
 
     Selection criterion, decided before any rule was scored:
         Catch as much fraud as possible (highest recall) while flagging no

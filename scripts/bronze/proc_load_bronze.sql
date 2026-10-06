@@ -44,8 +44,8 @@ BEGIN
 		--
 		-- MAXERRORS = 0: the default is 10, which means BULK INSERT skips rows it cannot
 		-- convert and still reports success. A partial load that looks clean is worse
-		-- than a failed one, especially since Phase 9 reconciles row counts across the
-		-- layers. Setting it to 0 makes any conversion failure stop the load.
+		-- than a failed one, especially since the reconciliation checks compare row
+		-- counts across the layers. Setting it to 0 makes any conversion failure stop the load.
 		-- See docs/maxerrors_note.md.
 		--
 		-- BATCHSIZE = 100000: without it the whole 6.36 million rows is one transaction,

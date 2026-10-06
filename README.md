@@ -238,9 +238,10 @@ Two design choices are worth explaining:
   would be cheating. So `fact_transactions`, which rules are written against, has no balance
   columns. They live in `fact_transaction_balances`, for description only.
 - **The dimensions and the destination history are tables, not views.** The reference project
-  builds every gold object as a view. Here, a report that had to rebuild both dimensions from
-  silver on every query took 18.6 seconds, against 5.5 seconds with the dimensions stored. The
-  fact itself stays a view, so there is no second copy of the transactions.
+  builds every gold object as a view. Here, in a one-off timing test, a report that had to
+  rebuild both dimensions from silver on every query took 18.6 seconds, against 5.5 seconds
+  with the dimensions stored. The fact itself stays a view, so there is no second copy of the
+  transactions.
 
 Every column is described in [docs/data_catalog.md](docs/data_catalog.md).
 
@@ -253,10 +254,11 @@ seen.
 1. **The selection criterion came first.** Before any rule was scored, the criterion was set:
    catch as much fraud as possible while flagging no more than 0.5% of honest TRANSFER and
    CASH_OUT transactions, and prefer the simpler rule when two are within one point of recall.
-2. **The data was split by day.** Rules were designed on days 1 to 15 and tested on days 16 to
-   30. The first plan was days 1 to 20 and 21 to 31, but profiling showed normal volume
-   collapses from day 18 onward, which would have left a test period made only of quiet days.
-   Moving the cutoff put two busy days in the test period and split the fraud almost evenly.
+2. **The data was split by day.** Rules were designed on days 1 to 15 and tested on
+   days 16 to 30. The first plan was days 1 to 20 and 21 to 31, but profiling showed normal
+   volume collapses from day 18 onward, which would have left a test period made only of
+   quiet days. Moving the cutoff put two busy days in the test period and split the fraud
+   almost evenly.
 3. **Day 31 was left out of scoring.** It has 272 fraud transactions and no normal ones, which
    is an artifact of the simulation. It stays in the data.
 4. **Rules may only use what was known at the time.** A rule can use the transaction's own
@@ -288,8 +290,8 @@ The full account, including every candidate rule that was tried, is in
 - **The FLOAT comparison.** The first check of whether balances add up compared `FLOAT`
   values against a 0.01 tolerance. Many rows are off by exactly one cent, and `FLOAT` cannot
   hold 0.01 exactly, so those rows fell on either side of the line and the counts were wrong.
-  For one transaction type the first count was 101,096 and the correct count is 33. The checks
-  now cast every value to `DECIMAL(18,2)` before comparing. See
+  For one transaction type the first check reported 7.22% of rows, and the correct count is
+  33 rows. The checks now cast every value to `DECIMAL(18,2)` before comparing. See
   [docs/data_profiling_note.md](docs/data_profiling_note.md).
 - **The memory stall.** The first full load stalled because the laptop was short of memory.
   SQL Server's wait statistics pointed to the cause. `BATCHSIZE` was added to the bronze load
@@ -414,4 +416,21 @@ PaysimFraudAnalysis/
 ---
 ## About Me
 
-*(To be written.)*
+I'm Malachy Ugwu, an aspiring data analyst and data scientist with a background
+in Electrical Engineering. I enjoy turning business questions into answers the
+data can back up, and one of my many interests is fraud analytics and financial
+technology.
+
+This project is an example of that: taking 6.36 million raw transactions,
+building a warehouse that can be traced from end to end, and testing a fraud
+rule the honest way, on days it had never seen.
+
+### Get in Touch
+
+- **Email:** malachyugwu2002@gmail.com
+- **LinkedIn:** [www.linkedin.com/in/malachyugwu](https://www.linkedin.com/in/malachyugwu)
+- **GitHub:** [github.com/Shikamaru-n](https://github.com/Shikamaru-n)
+- **Questions about this project:** open an issue on this repository.
+
+Outside data, I play chess, both online and over the board. Happy to take on a
+game as well as a question.

@@ -63,13 +63,13 @@ letting the statement report success.
 The type problem is solved by using `FLOAT` in bronze and casting to `DECIMAL(18,2)` in
 silver. But `MAXERRORS = 0` is kept anyway, for a different reason.
 
-Phase 9 reconciles row counts across bronze, silver and gold against the 6,362,620 rows in
-the file. If a future change to the source file or the table definition introduced conversion
+The reconciliation checks compare row counts across bronze, silver and gold against the
+6,362,620 rows in the file. If a future change to the source file or the table definition introduced conversion
 failures, the default setting would let up to 10 rows vanish without a word, and the
 reconciliation would be the first thing to notice. `MAXERRORS = 0` makes the load fail loudly
 at the point the problem is introduced, which is where it is cheapest to fix.
 
-## The two settings together
+## The settings together
 
 The bronze load therefore uses:
 
@@ -88,7 +88,7 @@ WITH (
 rather than as one transaction. The comment in the bronze procedure explains why.
 
 `ROWTERMINATOR` is covered in [row_terminator_note.md](row_terminator_note.md). The two
-problems are unrelated but were found in the same session, and both are the sort that look
+problems are unrelated but were found at the same time, and both are the sort that look
 like something else at first.
 
 ## On the float round trip

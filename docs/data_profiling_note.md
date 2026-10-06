@@ -1,4 +1,4 @@
-# Data Profiling Note: What Phase 4 Found
+# Data Profiling Note: What Profiling Found
 
 The key results from profiling the raw PaySim data in `bronze.paysim_transactions`, and the
 build and test cutoff that was chosen because of them.

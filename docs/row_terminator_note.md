@@ -1,8 +1,7 @@
 # Row Terminator Note
 
 Why the bronze load uses `ROWTERMINATOR = '0x0a'` instead of the default, and how that was
-worked out. Worth a line in the README, because it is the kind of problem that looks like a
-permissions failure and is not.
+worked out. It is the kind of problem that looks like a permissions failure and is not.
 
 ## The symptom
 
