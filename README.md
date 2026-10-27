@@ -369,7 +369,7 @@ history, rule flags and rule scores) was saved before and after, using
 ---
 ## Repository Structure
 ```
-PaysimFraudAnalysis/
+paysim-fraud-analysis/
 │
 ├── datasets/                           # The PaySim CSV goes here (not committed)
 │   └── README.md                       # Where to download the file and what the scripts expect
